@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -73,7 +75,7 @@ public class HomeActivity extends AppCompatActivity
     }
 
     public void setFacebookButtonAccordingly() {
-        if (!isLoggedInOnFacebook()) {
+        if (!FacebookManager.isLoggedInOnFacebook()) {
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             Menu menu = navigationView.getMenu();
             MenuItem fbButton = menu.findItem(R.id.fb_login_logout);
@@ -117,11 +119,6 @@ public class HomeActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public boolean isLoggedInOnFacebook() {
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        return accessToken != null;
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -143,7 +140,7 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         } else if (id == R.id.fb_login_logout) {
-            if (!isLoggedInOnFacebook()) {
+            if (!FacebookManager.isLoggedInOnFacebook()) {
                 // TODO
                 // What if we don't have an internet connection? Well it sucks and I have to do something about it
                 //
@@ -161,7 +158,7 @@ public class HomeActivity extends AppCompatActivity
             }
 
             // Log out of Facebook
-            LoginManager.getInstance().logOut();
+            FacebookManager.logOut();
 
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             Menu menu = navigationView.getMenu();

@@ -37,6 +37,7 @@ import com.facebook.login.widget.LoginButton;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -63,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
         setupContinueAsGuest();
 
         initFacebookLogin();
+        //LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
+        //textView = (TextView) findViewById(R.id.fbloginresulttext);
+        //FacebookManager.initFacebookLogin(callbackManager, loginButton, textView, getBaseContext());
     }
 
     @Override
@@ -94,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
             Get all those places' events
          */
 
+        /*
+
         GraphRequest request = GraphRequest.newGraphPathRequest(
                 AccessToken.getCurrentAccessToken(),
                 "/search",
@@ -117,11 +123,44 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+
+
+
         Bundle parameters = new Bundle();
         parameters.putString("q", "*");
         parameters.putString("type", "event");
         parameters.putString("center", "37.76,-122.427");
         parameters.putString("distance", "1000");
+        request.setParameters(parameters);
+        request.executeAsync();
+        */
+
+        GraphRequest request = GraphRequest.newGraphPathRequest(
+                AccessToken.getCurrentAccessToken(),
+                "/search",
+                new GraphRequest.Callback() {
+                    @Override
+                    public void onCompleted(GraphResponse response) {
+                        // Insert your code here
+
+                        try {
+                            JSONArray rawData = response.getJSONObject().getJSONArray("data");
+
+                            for (int i = 0; i < rawData.length(); ++i) {
+                                Toast.makeText(getBaseContext(), ((JSONObject)rawData.get(i)).getString("id"), Toast.LENGTH_LONG).show();
+                            }
+                        } catch (JSONException e) {
+                            Log.e("ERROR", "unhandled JSON exception", e);
+                        }
+                    }
+                });
+
+        Bundle parameters = new Bundle();
+        parameters.putString("pretty", "0");
+        parameters.putString("q", "*");
+        parameters.putString("type", "place");
+        parameters.putString("center", "46.771478,23.624490");
+        parameters.putString("distance", "10000");
         request.setParameters(parameters);
         request.executeAsync();
     }
@@ -144,8 +183,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 textView.setText("LOGIN SUCCESS");
-
-                //getFbEvents();
 
                 Intent intent = new Intent(getBaseContext(), HomeActivity.class);
                 startActivity(intent);
