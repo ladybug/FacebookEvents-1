@@ -9,14 +9,16 @@ public class Event {
     private String title;
     private String description;
     private double price;
+    private String startTime;
     // TODO the rest
 
 
-    public Event(int id, String title, String description, double price) {
+    public Event(int id, String title, String description, double price, String startTime) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.price = price;
+        this.startTime = startTime;
     }
 
     public int getId() {
@@ -34,4 +36,6 @@ public class Event {
     public double getPrice() {
         return price;
     }
+
+    public String getStartTime() { return startTime; }
 }

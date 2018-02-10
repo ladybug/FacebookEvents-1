@@ -44,42 +44,51 @@ public class FacebookManager {
     }
 
     public void getPlaceIds() {
-        GraphRequest request = GraphRequest.newGraphPathRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/search",
-                new GraphRequest.Callback() {
-                    @Override
-                    public void onCompleted(GraphResponse response) {
-                        // Insert your code here
+        // the do while is useless
+        final String[] nextPage = {""};
+        do {
+            GraphRequest request = GraphRequest.newGraphPathRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    "/search",
+                    new GraphRequest.Callback() {
+                        @Override
+                        public void onCompleted(GraphResponse response) {
+                            // Insert your code here
+                            try {
+                                JSONArray rawData = response.getJSONObject().getJSONArray("data");
+                                String nextPageData = response.getJSONObject().getJSONObject("paging").getJSONObject("cursors").getString("after");
+                                nextPage[0]  = nextPageData;
 
-                        try {
-                            JSONArray rawData = response.getJSONObject().getJSONArray("data");
+                                //Toast.makeText(getApplicationContext(), nextPageData, Toast.LENGTH_LONG).show();
 
-                            ArrayList<String> placeIds = new ArrayList<String>();
-                            for (int i = 0; i < rawData.length(); ++i) {
-                                placeIds.add(((JSONObject)rawData.get(i)).getString("id"));
+                                ArrayList<String> placeIds = new ArrayList<String>();
+                                for (int i = 0; i < rawData.length(); ++i) {
+                                    placeIds.add(((JSONObject) rawData.get(i)).getString("id"));
+                                }
+
+                                getEvents(placeIds);
+                            } catch (JSONException e) {
+                                Log.e("ERROR", "unhandled JSON exception", e);
                             }
-
-                            getEvents(placeIds);
-                        } catch (JSONException e) {
-                            Log.e("ERROR", "unhandled JSON exception", e);
                         }
-                    }
-                });
+                    });
 
-        Bundle parameters = new Bundle();
-        parameters.putString("pretty", "0");
-        parameters.putString("q", "*");
-        parameters.putString("type", "place");
-        parameters.putString("center", "46.771478,23.624490");
-        parameters.putString("distance", "1000");
-        request.setParameters(parameters);
-        request.executeAsync();
+            Bundle parameters = new Bundle();
+            parameters.putString("pretty", "0");
+            parameters.putString("q", "*");
+            parameters.putString("type", "place");
+            parameters.putString("center", "46.771478,23.624490");
+            parameters.putString("distance", "3000");
+            parameters.putString("limit", "100"); // This should work
+            request.setParameters(parameters);
+            request.executeAsync();
+        } while (nextPage[0].length() > 0);
     }
 
     public void getEvents(ArrayList<String> placeIds) {
-        //for (String s : placeIds) {
-            String placeEventQuery = placeIds.get(0) + "/events";
+        for (String s : placeIds) {
+            //String placeEventQuery = placeIds.get(0) + "/events";
+            String placeEventQuery = s + "/events";
 
             // Get the events from those place ids
             GraphRequest request = GraphRequest.newGraphPathRequest(
@@ -93,11 +102,14 @@ public class FacebookManager {
                                 for (int i = 0; i < rawData.length(); ++i) {
                                     //Toast.makeText(getApplicationContext(), ((JSONObject) rawData.get(i)).getString("name"), Toast.LENGTH_SHORT).show();
 
+                                    // Don't add the event to the list if start_time < current_time (date)
+                                    // start_time.split("T") (format for start_time is dateTtime
                                     fbEventsList.add(new Event(
                                             i + 1,
                                             ((JSONObject) rawData.get(i)).getString("name"),
                                             ((JSONObject) rawData.get(i)).getString("description"),
-                                            0
+                                            0,
+                                            ((JSONObject) rawData.get(i)).getString("start_time")
                                     ));
 
                                     FacebookEvents.setEventList(fbEventsList);
@@ -115,8 +127,9 @@ public class FacebookManager {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
 
-            request.executeAndWait();
-        //}
+            // Or maybe a loading screen and .executeAndWait()
+            request.executeAsync();
+        }
     }
 
     //! Not used

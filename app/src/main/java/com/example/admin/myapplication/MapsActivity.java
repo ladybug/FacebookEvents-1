@@ -31,6 +31,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        /*
         mMap = googleMap;
 
         if (ActivityCompat.checkSelfPermission(MapsActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MapsActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -45,11 +46,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
 
-            // Add a marker in Sydney, Australia, and move the camera.
             LatLng currLoc = new LatLng(latitude, longitude);
             mMap.addMarker(new MarkerOptions().position(currLoc).title("I'm here!"));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(currLoc));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(12.5f));
         //}
+        */
     }
 }

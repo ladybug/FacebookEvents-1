@@ -44,6 +44,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         holder.textViewTitle.setText(event.getTitle());
         holder.textViewDesc.setText(event.getDescription());
         holder.textViewPrice.setText(String.valueOf(event.getPrice()));
+        holder.textStartTime.setText(String.valueOf(event.getStartTime()));
 
         // Get photo from FB here
         //holder.imageView.setImageDrawable();
@@ -56,15 +57,17 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     class EventViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
-        TextView textViewTitle, textViewDesc, textViewPrice;
+        TextView textViewTitle, textViewDesc, textViewPrice, textStartTime;
 
         public EventViewHolder(View itemView) {
             super(itemView);
 
+            // Are these needed?
             imageView = itemView.findViewById(R.id.imageView);
             textViewTitle = itemView.findViewById(R.id.textViewTitle);
             textViewDesc = itemView.findViewById(R.id.textViewShortDesc);
             textViewPrice = itemView.findViewById(R.id.textViewPrice);
+            textStartTime = itemView.findViewById(R.id.textStartTime);
         }
     }
 }

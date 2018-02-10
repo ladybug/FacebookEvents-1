@@ -52,12 +52,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        FacebookManager fbManager = new FacebookManager();
+        fbManager.getPlaceIds();
+
         if (isLoggedInOnFacebook()) {
             Intent intent = new Intent(getBaseContext(), HomeActivity.class);
             startActivity(intent);
             finish();
         }
-
 
         pulaMea();
         buton2();
