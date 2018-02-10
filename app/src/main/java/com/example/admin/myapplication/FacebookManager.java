@@ -22,8 +22,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
@@ -104,13 +107,31 @@ public class FacebookManager {
 
                                     // Don't add the event to the list if start_time < current_time (date)
                                     // start_time.split("T") (format for start_time is dateTtime
-                                    fbEventsList.add(new Event(
-                                            i + 1,
-                                            ((JSONObject) rawData.get(i)).getString("name"),
-                                            ((JSONObject) rawData.get(i)).getString("description"),
-                                            0,
-                                            ((JSONObject) rawData.get(i)).getString("start_time")
-                                    ));
+
+                                    String start_time = ((JSONObject) rawData.get(i)).getString("start_time");
+                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                                    String[] start_time_and_date = start_time.split("T");
+
+                                    Date date = new Date();
+                                    try {
+                                        date = sdf.parse(start_time_and_date[0].toString());
+                                    } catch (java.text.ParseException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    // Get current date
+                                    Date now = new Date();
+
+                                    // if the event is later, add it to the list
+                                    if (!date.before(now)) {
+                                        fbEventsList.add(new Event(
+                                                i + 1,
+                                                ((JSONObject) rawData.get(i)).getString("name"),
+                                                ((JSONObject) rawData.get(i)).getString("description"),
+                                                0,
+                                                ((JSONObject) rawData.get(i)).getString("start_time")
+                                        ));
+                                    }
 
                                     FacebookEvents.setEventList(fbEventsList);
 
